@@ -91,7 +91,8 @@ echo(
 			<!-- Custom styles -->
 			<style>
 				body {
-					background-color: #f4f4f4;
+					/*background-color: #f4f4f4;*/
+					background-color: #f9fbff;
 				}
 
 				a {
@@ -103,7 +104,15 @@ echo(
 				}
 
 				header {
-					padding: 2rem 0;
+					padding: 1.5rem 0;
+					background-image: linear-gradient(110deg,#04A8FB 1%,#871faf 100%);
+					color: #fff;
+					margin-bottom: 1.8rem;
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					z-index: 1000;
 				}
 
 				.list-group-item {
@@ -165,33 +174,85 @@ echo(
 
 				.list-primary > li:before {
 					counter-increment: list;
-					content: counter(list);
+					content: counter(list)".";
 					display:inline-block;
 					font-weight: 700;
 					position: absolute;
-					left: 10px;
+					left: 1rem;
 					top: 0.9rem;
 				}
 
 				.list-primary {
 					counter-reset: list;
+					box-shadow: 0 0 1px 0 rgba(18,32,73,.1), 0 8px 32px 0 rgba(55,92,192,.1);
 				}
+
+				.main {
+					padding-top: 8rem;
+				}
+
+				.nav__menu {
+					display: flex;
+					align-items: center;
+					list-style:none;
+					font-weight: 500;
+					justify-content: flex-end;
+				}
+
+				.nav__menu li a {
+					color: #fff !important;
+					text-decoration: none !important;
+					display: inline-block;
+					padding: 1rem 0;
+					position: relative;
+				}
+
+				.nav__menu li a:before {
+					display: block;
+					width: 0.5em;
+					height: 0.5em;
+					background-color: #fff;
+					border-radius: 50%;
+					position: absolute;
+					content:"";
+					left: 50%;
+					transform: translate(-50%,100%);
+					bottom: 0;
+					opacity: 0;
+					transition: all .25s ease-in;
+				}
+
+				.nav__menu li a:hover:before {
+					opacity: 1;
+					transform: translate(-50%,0);
+				}
+
+				.nav__menu li {
+					margin-right: 30px;
+				}
+
 			</style>
 			
 		').
 		'<body>
 			<header>
 				<div class="container">
-					<nav class="nav">
-						<div class="row">
+					<nav>
+						<div class="row justify-content-between align-items-center">
 							<div class="col">
 								<h2><strong>Hacker News</strong></h2>
+							</div>
+							<div class="col">
+								<ul class="nav__menu p-0 m-0">
+									<li><a href="#">News</a></li>
+									<li><a href="#">Comments</a></li>
+								</ul>
 							</div>
 						</div>
 					</nav>					
 				</div>
 			</header>
-			<main>
+			<main class="main">
 				<div class="container">
 					'.createList(createElements()).
 					'
