@@ -1,16 +1,16 @@
 <?php
 
-/*
-// web/index.php
-require_once __DIR__.'/../vendor/autoload.php';
 
-$app = new Silex\Application();
+// // web/index.php
+// require_once __DIR__.'/../vendor/autoload.php';
 
-$app->get('/hello/{name}', function ($name) use ($app) {
-    return 'Hello '.$app->escape($name);
-});
+// $app = new Silex\Application();
 
-$app->run();*/
+// $app->get('/hello/{name}', function ($name) use ($app) {
+//     return 'Hello '.$app->escape($name);
+// });
+
+// $app->run();
 
 // Format the URL
 function formatURL($input){
@@ -21,45 +21,128 @@ function formatURL($input){
     return $chunks[0];
 }
 
-// 
+// Time difference (minutes, hours, days)
+function timeDiff($event) {
+
+	// Current timestamp
+	$now = time();
+
+	// Diff. in now and event in seconds 
+	$passed = $now - $event;
+
+	$days = round($passed / 86400);
+
+	$hours = round($passed / 3600);
+
+	$minutes = round($passed / 60);
+
+	// Add 's' suffix for mutliples
+	$plural = '';
+
+	// Output
+	$output = 'more than 30 days ago';
+
+	if ($minutes < 60) {
+	    if ($minutes > 1) {
+	        $plural = 's';
+	    }
+	    $output = $minutes . ' minute' . $plural .' ago';
+
+	} else if ($hours < 24) {
+	    if ($hours > 1) {
+	        $plural = 's';
+	    }
+	    $output = $hours . ' hour' . $plural .' ago';
+	} else if ($days < 30) {
+	    if ($days > 1) {
+	        $plural = 's';
+	    }
+	    $output = $days . ' day' . $plural .' ago';
+	}
+
+	return $output;
+}
+
 
 // Get the entries for the main list
-function createElements() {
+function createElements($type) {
 	// Get the list of all the last 500 stories
-	$storiesListGet = file_get_contents("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty");
+	$storiesListGet = file_get_contents("https://hacker-news.firebaseio.com/v0/".$type."stories.json?print=pretty");
 
 	// Store the JSON data into an array as object
 	$storiesList = json_decode($storiesListGet);
 
 	$collection = [];
 
-	for($i=0; $i < 3; $i++) {
+	for($i=0; $i < 5; $i++) {
 		//Get the story contents
 		$contGet = file_get_contents("https://hacker-news.firebaseio.com/v0/item/" . $storiesList[$i] . ".json?print=pretty");
 
 		// Store story contents as object
 		$cont = json_decode($contGet);
-		$commentsNo = count($cont->kids);
+
 
 
 		// Define base HTML element group
-		$el = 
-		'<li class="list-group-item" id="'.$cont->id.'">
-			<article class="article p-3">
-				<dl>
-					<dt>'./*($i+1).*/'</dt>
-					<dd>
-						<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
-						<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
-					</dd>
-				</dl>
-				<ul class="article__footer">
-					<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
-					<li><a href="#">hide</a></li>
-					<li>'.$commentsNo. ' comments</li>
-				</ul>
-			</article>
-		</li>';
+
+		// Structure for 'topstories'
+		if ($type === 'top') {
+			$el = 
+			'<li class="list-group-item" id="'.$cont->id.'">
+				<article class="article p-3">
+					<dl>
+						<dt></dt>
+						<dd>
+							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+						</dd>
+					</dl>
+					<ul class="article__footer">
+						<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
+						<li><a href="#">hide</a></li>
+						<li>'.count($cont->kids). ' comments</li>
+					</ul>
+				</article>
+			</li>';
+		} else if ($type === 'new') {
+			$el = 
+			'<li class="list-group-item" id="'.$cont->id.'">
+				<article class="article p-3">
+					<dl>
+						<dt></dt>
+						<dd>
+							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+						</dd>
+					</dl>
+					<ul class="article__footer">
+						<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
+						<li><a href="#">hide</a></li>
+						<li><a href="#">past</a></li>
+						<li><a href="#">web</a></li>
+						<li><a href="#">discuss</a></li>
+					</ul>
+				</article>
+			</li>';			
+		} else if ($type === 'show') {
+			$el = 
+			'<li class="list-group-item" id="'.$cont->id.'">
+				<article class="article p-3">
+					<dl>
+						<dt></dt>
+						<dd>
+							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+						</dd>
+					</dl>
+					<ul class="article__footer">
+						<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
+						<li>'.timeDiff($cont->time).'</li>
+						<li><a href="#">discuss</a></li>
+					</ul>
+				</article>
+			</li>';						
+		}
 
 		// Add new element to 'story elements' array
 		array_push($collection, $el);
@@ -195,11 +278,7 @@ echo(
 
 				.list-primary > li {
 					padding-left: 2rem;
-				}
-
-				.list-primary > li {
 					position: relative;
-					overflow: hidden;
 					transition: all 0.2s ease-in;
 				}
 
@@ -214,25 +293,10 @@ echo(
 					z-index: 10;
 				}
 
-				.list-primary > li:after {
-					position: absolute;
-					content: "";
-					display: block;
-					width: 114%;
-					padding-bottom: 114%;
-					left: 50%;
-					top: 50%;
-					transform: translate(-50%, -50%) scale(0,0);
+				.list-primary > li:hover {
 					background-color: #f5f0f0;
-					border-radius: 50%;
-					opacity: 0.8;
 				}
 
-				.list-primary > li:hover:after {
-					transform: translate(-50%, -50%);
-					opacity: 1;
-					transition: all 0.2s ease-in;
-				}
 
 				.list-primary {
 					counter-reset: list;
@@ -287,8 +351,7 @@ echo(
 					margin-right: 0;
 				}
 
-			</style>
-			
+			</style>	
 		').
 		'<body>
 			<header>
@@ -302,6 +365,7 @@ echo(
 								<ul class="nav__menu p-0 m-0">
 									<li><a href="#">News</a></li>
 									<li><a href="#">Comments</a></li>
+									<li><a href="#">Show</a></li>
 								</ul>
 							</div>
 						</div>
@@ -310,7 +374,7 @@ echo(
 			</header>
 			<main class="main">
 				<div class="container">
-					'.createList(createElements()).
+					'.createList(createElements('show')).
 					'
 				</div>
 			</main>
