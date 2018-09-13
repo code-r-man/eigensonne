@@ -45,15 +45,20 @@ function createElements() {
 		// Define base HTML element group
 		$el = 
 		'<li class="list-group-item" id="'.$cont->id.'">
-			<dl>
-				<dt>'./*($i+1).*/'</dt>
-				<dd>'.$cont->title.'<span>'.formatURL($cont->url).'</span></dd>
-			</dl>
-			<p>
-				<span>'.$cont->score.' points by '.$cont->by.'</span>
-				<span><a href="#">hide</a></span>
-				<span>'.$commentsNo. ' comments</span>
-			</p>
+			<article class="article p-3">
+				<dl>
+					<dt>'./*($i+1).*/'</dt>
+					<dd>
+						<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+						<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+					</dd>
+				</dl>
+				<p class="article__footer">
+					<span>'.$cont->score.' points by '.$cont->by.'</span>
+					<span><a href="#">hide</a></span>
+					<span>'.$commentsNo. ' comments</span>
+				</p>
+			</article>
 		</li>';
 
 		// Add new element to 'story elements' array
@@ -65,7 +70,7 @@ function createElements() {
 
 // Create main list (results go here)
 function createList($elements) {
-	return '<ol class="list-group">'.$elements.'</ol>';
+	return '<ol class="list-group list-primary">'.$elements.'</ol>';
 }
 
 // Create head
@@ -85,23 +90,113 @@ echo(
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/0.5.0/modern-normalize.min.css" />
 			<!-- Custom styles -->
 			<style>
-				.list-main {
+				body {
+					background-color: #f4f4f4;
+				}
+
+				a {
+					color: #e74c3c !important;
+
+					&:hover {
+						text-decoration: underline;
+					}
+				}
+
+				header {
+					padding: 2rem 0;
+				}
+
+				.list-group-item {
+					background-color: #fff;
+					padding: 0;
+				}
+
+				.article {
+					padding-left: 2rem;
+				}
+
+				.article > * {
+					margin-bottom: 0.3em;
+				}
+
+				.article p:last-child {
+					margin: 0;
+				}
+
+				.article dl dd {
+					margin-bottom: 0;
+					display: flex;
+					justify-content: space-between;
+				}
+
+				.article dl dd span {
+
+				}
+
+				.article__title {
+					display: inline-block;
+					font-weight: 500;
+				}
+
+				.article dl dt {
 					
+				}
+
+				.article__footer {
+					font-size: .8em;
+				}
+
+				.article__link-primary {
+					color: #bbb !important;
+					text-decoration: none !important;
+				}
+
+				.article__link-primary:hover {
+					color: #e74c3c !important;
+				}
+
+				.list-primary > li {
+					padding-left: 2rem;
+				}
+
+				.list-primary > li {
+					position: relative;
+				}
+
+				.list-primary > li:before {
+					counter-increment: list;
+					content: counter(list);
+					display:inline-block;
+					font-weight: 700;
+					position: absolute;
+					left: 10px;
+					top: 0.9rem;
+				}
+
+				.list-primary {
+					counter-reset: list;
 				}
 			</style>
 			
 		').
 		'<body>
-			<div class="container">
-				<nav class="nav">
-					<div class="row">
-						<div class="col">
-
+			<header>
+				<div class="container">
+					<nav class="nav">
+						<div class="row">
+							<div class="col">
+								<h2><strong>Hacker News</strong></h2>
+							</div>
 						</div>
-					</div>
-					</nav>
-				'.createList(createElements()).
-			'</div>
+					</nav>					
+				</div>
+			</header>
+			<main>
+				<div class="container">
+					'.createList(createElements()).
+					'
+				</div>
+			</main>
 		</body>
 	</html>'			
 );
