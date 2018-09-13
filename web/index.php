@@ -53,11 +53,11 @@ function createElements() {
 						<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
 					</dd>
 				</dl>
-				<p class="article__footer">
-					<span>'.$cont->score.' points by '.$cont->by.'</span>
-					<span><a href="#">hide</a></span>
-					<span>'.$commentsNo. ' comments</span>
-				</p>
+				<ul class="article__footer">
+					<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
+					<li><a href="#">hide</a></li>
+					<li>'.$commentsNo. ' comments</li>
+				</ul>
 			</article>
 		</li>';
 
@@ -126,6 +126,8 @@ echo(
 
 				.article > * {
 					margin-bottom: 0.3em;
+					position: relative;
+					z-index: 10;
 				}
 
 				.article p:last-child {
@@ -153,6 +155,29 @@ echo(
 
 				.article__footer {
 					font-size: .8em;
+					padding: 0;
+					list-style-type: none;
+					display: flex;
+
+				}
+
+				.article__footer li {
+					margin-right: 1.4rem;
+					position: relative;
+					line-height: 1.2em;
+				}
+
+				.article__footer li + li:before {
+					position: absolute;
+					content: "";
+					display: block;
+					width: 0.35rem;
+					height: 0.35rem;
+					background-color: #938e8e;
+					left: -0.7rem;
+					border-radius: 50%;
+					top: 0.65em;
+					transform: translate(-50%, -50%);
 				}
 
 				.article__link-primary {
@@ -164,12 +189,18 @@ echo(
 					color: #e74c3c !important;
 				}
 
+				.article__link-alt {
+					font-weight: 700;
+				}
+
 				.list-primary > li {
 					padding-left: 2rem;
 				}
 
 				.list-primary > li {
 					position: relative;
+					overflow: hidden;
+					transition: all 0.2s ease-in;
 				}
 
 				.list-primary > li:before {
@@ -180,6 +211,27 @@ echo(
 					position: absolute;
 					left: 1rem;
 					top: 0.9rem;
+					z-index: 10;
+				}
+
+				.list-primary > li:after {
+					position: absolute;
+					content: "";
+					display: block;
+					width: 114%;
+					padding-bottom: 114%;
+					left: 50%;
+					top: 50%;
+					transform: translate(-50%, -50%) scale(0,0);
+					background-color: #f5f0f0;
+					border-radius: 50%;
+					opacity: 0.8;
+				}
+
+				.list-primary > li:hover:after {
+					transform: translate(-50%, -50%);
+					opacity: 1;
+					transition: all 0.2s ease-in;
 				}
 
 				.list-primary {
@@ -229,6 +281,10 @@ echo(
 
 				.nav__menu li {
 					margin-right: 30px;
+				}
+
+				.nav__menu li:last-child {
+					margin-right: 0;
 				}
 
 			</style>
