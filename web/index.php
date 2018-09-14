@@ -73,6 +73,7 @@ function createElements($type) {
 	$storiesList = json_decode($storiesListGet);
 
 	$collection = [];
+	$el = '';
 
 	for($i=0; $i < 5; $i++) {
 		//Get the story contents
@@ -81,11 +82,9 @@ function createElements($type) {
 		// Store story contents as object
 		$cont = json_decode($contGet);
 
-
-
 		// Define base HTML element group
 
-		// Structure for 'topstories'
+		// Structure for 'topstories' - default
 		if ($type === 'top') {
 			$el = 
 			'<li class="list-group-item" id="'.$cont->id.'">
@@ -98,9 +97,12 @@ function createElements($type) {
 						</dd>
 					</dl>
 					<ul class="article__footer">
-						<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
+						<li>'
+							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							 '.timeDiff($cont->time).'
+						</li>
 						<li><a href="#">hide</a></li>
-						<li>'.count($cont->kids). ' comments</li>
+						<li><a href="#">'.count($cont->kids).' comments</a></li>
 					</ul>
 				</article>
 			</li>';
@@ -116,7 +118,10 @@ function createElements($type) {
 						</dd>
 					</dl>
 					<ul class="article__footer">
-						<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
+						<li>'
+							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							 '.timeDiff($cont->time).'
+						</li>
 						<li><a href="#">hide</a></li>
 						<li><a href="#">past</a></li>
 						<li><a href="#">web</a></li>
@@ -136,12 +141,51 @@ function createElements($type) {
 						</dd>
 					</dl>
 					<ul class="article__footer">
-						<li>'.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a></li>
-						<li>'.timeDiff($cont->time).'</li>
+						<li>'
+							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							 '.timeDiff($cont->time).'
+						</li>
 						<li><a href="#">discuss</a></li>
 					</ul>
 				</article>
 			</li>';						
+		} else if ($type === 'ask') {
+			$el = 
+			'<li class="list-group-item" id="'.$cont->id.'">
+				<article class="article p-3">
+					<dl>
+						<dt></dt>
+						<dd>
+							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+						</dd>
+					</dl>
+					<ul class="article__footer">
+						<li>'
+							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							 '.timeDiff($cont->time).'
+						</li>
+						<li><a href="#">discuss</a></li>
+					</ul>
+				</article>
+			</li>';					
+		} else if ($type === 'job') {
+			$el = 
+			'<li class="list-group-item" id="'.$cont->id.'">
+				<article class="article p-3">
+					<dl>
+						<dt></dt>
+						<dd>
+							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+						</dd>
+					</dl>
+					<ul class="article__footer">
+						<li>
+							<a href="#">'.timeDiff($cont->time).'</a>
+						</li>
+					</ul>
+				</article>
+			</li>';
 		}
 
 		// Add new element to 'story elements' array
@@ -184,6 +228,17 @@ echo(
 					&:hover {
 						text-decoration: underline;
 					}
+				}
+
+				.nav__main {
+					text-decoration: none !important;
+					color: #fff !important;
+					transition: all .3s ease-in;
+					display: inline-block;
+				}
+
+				.nav__main:hover {
+					opacity: .65;
 				}
 
 				header {
@@ -359,13 +414,15 @@ echo(
 					<nav>
 						<div class="row justify-content-between align-items-center">
 							<div class="col">
-								<h2><strong>Hacker News</strong></h2>
+								<a class="nav__main" href=""><h2><strong>Hacker News</strong></h2></a>
 							</div>
 							<div class="col">
 								<ul class="nav__menu p-0 m-0">
 									<li><a href="#">News</a></li>
 									<li><a href="#">Comments</a></li>
 									<li><a href="#">Show</a></li>
+									<li><a href="#">Ask</a></li>
+									<li><a href="#">Jobs</a></li>
 								</ul>
 							</div>
 						</div>
@@ -374,7 +431,7 @@ echo(
 			</header>
 			<main class="main">
 				<div class="container">
-					'.createList(createElements('show')).
+					'.createList(createElements('job')).
 					'
 				</div>
 			</main>
