@@ -186,6 +186,7 @@ function createElements($type) {
 					</ul>
 				</article>
 			</li>';
+		} else {
 		}
 
 		// Add new element to 'story elements' array
@@ -228,6 +229,26 @@ echo(
 					&:hover {
 						text-decoration: underline;
 					}
+				}
+
+				.btn-primary {
+					user-select: none;
+					box-shadow: 0 4px 8px 0 rgba(18,74,138,.24);
+					background: #79d634;
+					color: #fff;
+					text-decoration: none !important;
+					padding: 0.5rem 3rem !important;
+					border-radius: 0.2rem;
+					font-weight: 700;
+					transition: all .3s ease-in;
+				}
+
+				.btn-primary:hover {
+					background: #6cc828;
+				}
+
+				.btn-primary:before {
+					display: none !important;
 				}
 
 				.nav__main {
@@ -423,6 +444,7 @@ echo(
 									<li><a href="#">Show</a></li>
 									<li><a href="#">Ask</a></li>
 									<li><a href="#">Jobs</a></li>
+									<li><a href="#" class="btn-primary">Login</a></li>
 								</ul>
 							</div>
 						</div>
