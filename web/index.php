@@ -7,8 +7,12 @@ require_once __DIR__.'/../vendor/autoload.php';
 $app = new Silex\Application();
 
 $app->get('/api/{type}', function ($type) use ($app) {
-	// return createDoc($type);
 	return createDoc($type);
+});
+
+// Redirect to homepage
+$app->get('/web', function () use ($app) {
+    return $app->redirect('/api/top');
 });
 
 $app->run();
@@ -99,11 +103,11 @@ function createElements($type) {
 					</dl>
 					<ul class="article__footer">
 						<li>'
-							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
 							 '.timeDiff($cont->time).'
 						</li>
-						<li><a href="#">hide</a></li>
-						<li><a href="#">'.count($cont->kids).' comments</a></li>
+						<li><a href="#fake">hide</a></li>
+						<li><a href="#fake">'.count($cont->kids).' comments</a></li>
 					</ul>
 				</article>
 			</li>';
@@ -120,13 +124,13 @@ function createElements($type) {
 					</dl>
 					<ul class="article__footer">
 						<li>'
-							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
 							 '.timeDiff($cont->time).'
 						</li>
-						<li><a href="#">hide</a></li>
-						<li><a href="#">past</a></li>
-						<li><a href="#">web</a></li>
-						<li><a href="#">discuss</a></li>
+						<li><a href="#fake">hide</a></li>
+						<li><a href="#fake">past</a></li>
+						<li><a href="#fake">web</a></li>
+						<li><a href="#fake">discuss</a></li>
 					</ul>
 				</article>
 			</li>';			
@@ -143,10 +147,10 @@ function createElements($type) {
 					</dl>
 					<ul class="article__footer">
 						<li>'
-							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
 							 '.timeDiff($cont->time).'
 						</li>
-						<li><a href="#">discuss</a></li>
+						<li><a href="#fake">discuss</a></li>
 					</ul>
 				</article>
 			</li>';						
@@ -162,10 +166,10 @@ function createElements($type) {
 					</dl>
 					<ul class="article__footer">
 						<li>'
-							.$cont->score.' points by <a href="#" class="article__link-alt">'.$cont->by.'</a>
+							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
 							 '.timeDiff($cont->time).'
 						</li>
-						<li><a href="#">discuss</a></li>
+						<li><a href="#fake">discuss</a></li>
 					</ul>
 				</article>
 			</li>';					
@@ -182,7 +186,7 @@ function createElements($type) {
 					</dl>
 					<ul class="article__footer">
 						<li>
-							<a href="#">'.timeDiff($cont->time).'</a>
+							<a href="#fake">'.timeDiff($cont->time).'</a>
 						</li>
 					</ul>
 				</article>
@@ -223,8 +227,28 @@ function createDoc($type) {
 				<!-- Custom styles -->
 				<style>
 					body {
-						/*background-color: #f4f4f4;*/
 						background-color: #f9fbff;
+					}
+
+					.overlay {
+						position: fixed;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+						background-color: #000;
+						opacity: .6;
+						z-index: 30;
+						visibility: hidden;
+						transition: all .3 ease-in;
+					}
+
+					.overlay.in {
+						visibility: visible;
+					}
+
+					@media (min-width: 768px) {
+						display:none;
 					}
 	
 					a {
@@ -245,6 +269,7 @@ function createDoc($type) {
 						border-radius: 0.2rem;
 						font-weight: 700;
 						transition: all .3s ease-in;
+						display: inline-block !important;
 					}
 	
 					.btn-primary:hover {
@@ -255,11 +280,25 @@ function createDoc($type) {
 						display: none !important;
 					}
 	
-					.nav__main {
+					.nav__main > * {
 						text-decoration: none !important;
 						color: #fff !important;
 						transition: all .3s ease-in;
 						display: inline-block;
+						font-size: 1.28rem;
+						
+					}
+
+					@media (min-width: 480px) {
+						.nav__main > * {
+							font-size: 1.6rem;
+						}
+					}
+
+					@media (min-width: 992px) {
+						.nav__main > * {
+							font-size: 2rem;
+						}
 					}
 	
 					.nav__main:hover {
@@ -301,6 +340,17 @@ function createDoc($type) {
 						margin-bottom: 0;
 						display: flex;
 						justify-content: space-between;
+						flex-direction: column;
+					}
+
+					@media (min-width: 768px) {
+						.article dl dd {
+							flex-direction: row;
+						}
+					}
+
+					.article dl dd a {
+						text-align: right;
 					}
 	
 					.article dl dd span {
@@ -321,13 +371,25 @@ function createDoc($type) {
 						padding: 0;
 						list-style-type: none;
 						display: flex;
-	
+						flex-wrap: wrap;
 					}
 	
 					.article__footer li {
 						margin-right: 1.4rem;
 						position: relative;
 						line-height: 1.2em;
+					}
+
+					.article__footer li:first-child {
+						width: 100%;
+						margin-bottom: 0.3rem;
+					}
+
+					@media (min-width: 760px) {
+						.article__footer li:first-child {
+							width: auto;
+							margin-bottom: 0;
+						}
 					}
 	
 					.article__footer li + li:before {
@@ -342,10 +404,14 @@ function createDoc($type) {
 						top: 0.65em;
 						transform: translate(-50%, -50%);
 					}
-	
+
+					.article__footer li:first-child + li:before {
+						display: none;
+					}	
 					.article__link-primary {
 						color: #bbb !important;
 						text-decoration: none !important;
+						
 					}
 	
 					.article__link-primary:hover {
@@ -392,19 +458,66 @@ function createDoc($type) {
 						align-items: center;
 						list-style:none;
 						font-weight: 500;
-						justify-content: flex-end;
+						background-color: #34495e;
+						position: absolute;
+						flex-direction: column;
+						left:0;
+						top: 100%;
+						min-width: 300px;
+						height: calc(100vh - 86px);
+						transition: all .3s ease-in;
+						transform: translateX(-100%);
+					}
+
+					.nav__menu.in {
+						transform: none;
+					}
+
+					@media (min-width: 768px) {
+						.nav__menu {
+							position: static;
+							flex-direction: row;
+							justify-content: flex-end;
+							background-color: transparent;
+							height: auto;
+							transform: none;
+						}
+					}
+
+					.nav__base {
+						position: static;
+						text-align: right;
+					}
+
+					@media (min-width: 768px) {
+						position: relative;
 					}
 	
 					.nav__menu li a {
 						color: #fff !important;
 						text-decoration: none !important;
-						display: inline-block;
+						display: block;
 						padding: 1rem 0;
 						position: relative;
+						text-align: center;
+					}
+					
+					@media (max-width: 767px) {
+						.nav__menu li a:hover {
+							background-color: #4c6b8a;
+						}
+					}
+					
+
+					@media (min-width: 768px) {
+						.nav__menu li a {
+							display: inline-block;
+							text-align: left;
+						}
 					}
 	
 					.nav__menu li a:before {
-						display: block;
+						display: none;
 						width: 0.5em;
 						height: 0.5em;
 						background-color: #fff;
@@ -417,38 +530,97 @@ function createDoc($type) {
 						opacity: 0;
 						transition: all .25s ease-in;
 					}
+
+					@media (min-width: 768px) {
+						.nav__menu li a:before {
+							display: block;
+						}
+					}
 	
 					.nav__menu li a:hover:before {
 						opacity: 1;
 						transform: translate(-50%,0);
 					}
-	
+					
+
 					.nav__menu li {
-						margin-right: 30px;
+						width: 100%;
+						text-align: center;
+						border-bottom: 1px solid #000;
 					}
-	
+
+					@media (min-width: 768px) {
+						.nav__menu li {
+							margin-right: 30px;
+							text-align: left;
+							border-bottom: none;
+						}
+					}
+					
 					.nav__menu li:last-child {
 						margin-right: 0;
+						border-bottom: none;
+						padding-top: 1rem;
+					}
+					
+					@media (min-width: 768px) {
+						.nav__menu li:last-child {
+							padding-top: 0;
+						}
+					}
+
+
+					.nav__toggle {
+						padding: 0;
+						background-color: transparent !important;
+						display: inline-block;
+						padding: 10px;
+						border: none !important;
+						border-radius: 0 !important;
+						outline: none !important;
+					}
+
+					@media (min-width: 768px) {
+						.nav__toggle {
+							display: none;
+						}
+					}
+
+					.nav__toggle span {
+						display: block;
+						height: 2px;
+						width: 20px;
+						background-color: #fff;
+					}
+
+					.nav__toggle span + span {
+						margin-top: 3px;
 					}
 	
 				</style>	
 			').
 			'<body>
+				<div class="overlay js-overlay"></div>
 				<header>
 					<div class="container">
 						<nav>
 							<div class="row justify-content-between align-items-center">
 								<div class="col">
-									<a class="nav__main" href=""><h2><strong>Hacker News</strong></h2></a>
+									<a class="nav__main" href="/api/top"><h2><strong>Hacker News</strong></h2></a>
 								</div>
-								<div class="col">
-									<ul class="nav__menu p-0 m-0">
-										<li><a href="#">News</a></li>
-										<li><a href="#">Comments</a></li>
-										<li><a href="#">Show</a></li>
-										<li><a href="#">Ask</a></li>
-										<li><a href="#">Jobs</a></li>
-										<li><a href="#" class="btn-primary">Login</a></li>
+								<div class="col nav__base">
+									<button class="nav__toggle js-nav-toggle">
+										<span></span>
+										<span></span>
+										<span></span>
+									</button>
+									<ul class="nav__menu p-0 m-0 js-nav-menu">
+										<li><a href="/api/new">News</a></li>
+										<li><a href="#fake">Comments</a></li>
+										<li><a href="/api/show">Show</a></li>
+										<li><a href="/api/ask">Ask</a></li>
+										<li><a href="/api/job">Jobs</a></li>
+										<li><a href="#fake" class="btn-primary">Login</a></li>
 									</ul>
 								</div>
 							</div>
@@ -461,6 +633,27 @@ function createDoc($type) {
 						'
 					</div>
 				</main>
+				<!-- jQuery -->
+				<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+				<!-- Main JS -->
+				<script>
+					$(\'[href="#fake"]\').click(function(event){
+						event.preventDefault();
+						alert("Dummy link pressed. No navigation here, sorry.");
+					});
+					
+					// Toggle nav menu
+					$(".js-nav-toggle").click(function(){
+						$(".js-nav-menu, .js-overlay").toggleClass("in");
+					});
+
+					// Close nav menu
+					$(".js-overlay").click(function(){
+						$(".js-nav-menu, .js-overlay").removeClass("in");
+					});
+
+				</script>
 			</body>
 		</html>';			
 }
