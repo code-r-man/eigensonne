@@ -71,134 +71,143 @@ function timeDiff($event) {
 
 // Get the entries for the main list
 function createElements($type) {
-	// Get the list of all the last 500 stories
-	$storiesListGet = file_get_contents("https://hacker-news.firebaseio.com/v0/".$type."stories.json?print=pretty");
 
-	// Store the JSON data into an array as object
-	$storiesList = json_decode($storiesListGet);
 
-	$collection = [];
-	$el = '';
+	try {
+		// Get the list of all the last 500 stories
+		$storiesListGet = file_get_contents("https://hacker-news.firebaseio.com/v0/".$type."stories.json?print=pretty");
 
-	for($i=0; $i < 5; $i++) {
-		//Get the story contents
-		$contGet = file_get_contents("https://hacker-news.firebaseio.com/v0/item/" . $storiesList[$i] . ".json?print=pretty");
+		// Store the JSON data into an array as object
+		$storiesList = json_decode($storiesListGet);
 
-		// Store story contents as object
-		$cont = json_decode($contGet);
+		$collection = [];
+		$el = '';
 
-		// Define base HTML element group
+		for($i=0; $i < 5; $i++) {
+			//Get the story contents
+			$contGet = file_get_contents("https://hacker-news.firebaseio.com/v0/item/" . $storiesList[$i] . ".json?print=pretty");
+	
+			// Store story contents as object
+			$cont = json_decode($contGet);
+	
+			// Define base HTML element group
+			// Structure for 'topstories' - default
+			if ($type === 'top') {
+				$el = 
+				'<li class="list-group-item" id="'.$cont->id.'">
+					<article class="article p-3">
+						<dl>
+							<dt></dt>
+							<dd>
+								<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+								<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+							</dd>
+						</dl>
+						<ul class="article__footer">
+							<li>'
+								.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
+								 '.timeDiff($cont->time).'
+							</li>
+							<li><a href="#fake">hide</a></li>
+							<li><a href="#fake">'.count($cont->kids).' comments</a></li>
+						</ul>
+					</article>
+				</li>';
+			} else if ($type === 'new') {
+				$el = 
+				'<li class="list-group-item" id="'.$cont->id.'">
+					<article class="article p-3">
+						<dl>
+							<dt></dt>
+							<dd>
+								<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+								<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+							</dd>
+						</dl>
+						<ul class="article__footer">
+							<li>'
+								.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
+								 '.timeDiff($cont->time).'
+							</li>
+							<li><a href="#fake">hide</a></li>
+							<li><a href="#fake">past</a></li>
+							<li><a href="#fake">web</a></li>
+							<li><a href="#fake">discuss</a></li>
+						</ul>
+					</article>
+				</li>';			
+			} else if ($type === 'show') {
+				$el = 
+				'<li class="list-group-item" id="'.$cont->id.'">
+					<article class="article p-3">
+						<dl>
+							<dt></dt>
+							<dd>
+								<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+								<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+							</dd>
+						</dl>
+						<ul class="article__footer">
+							<li>'
+								.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
+								 '.timeDiff($cont->time).'
+							</li>
+							<li><a href="#fake">discuss</a></li>
+						</ul>
+					</article>
+				</li>';						
+			} else if ($type === 'ask') {
+				$el = 
+				'<li class="list-group-item" id="'.$cont->id.'">
+					<article class="article p-3">
+						<dl>
+							<dt></dt>
+							<dd>
+								<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+							</dd>
+						</dl>
+						<ul class="article__footer">
+							<li>'
+								.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
+								 '.timeDiff($cont->time).'
+							</li>
+							<li><a href="#fake">discuss</a></li>
+						</ul>
+					</article>
+				</li>';					
+			} else if ($type === 'job') {
+				$el = 
+				'<li class="list-group-item" id="'.$cont->id.'">
+					<article class="article p-3">
+						<dl>
+							<dt></dt>
+							<dd>
+								<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
+								<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
+							</dd>
+						</dl>
+						<ul class="article__footer">
+							<li>
+								<a href="#fake">'.timeDiff($cont->time).'</a>
+							</li>
+						</ul>
+					</article>
+				</li>';
+			} else {
+			}
+	
+			// Add new element to 'story elements' array
+			array_push($collection, $el);
+		};
 
-		// Structure for 'topstories' - default
-		if ($type === 'top') {
-			$el = 
-			'<li class="list-group-item" id="'.$cont->id.'">
-				<article class="article p-3">
-					<dl>
-						<dt></dt>
-						<dd>
-							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
-							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
-						</dd>
-					</dl>
-					<ul class="article__footer">
-						<li>'
-							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
-							 '.timeDiff($cont->time).'
-						</li>
-						<li><a href="#fake">hide</a></li>
-						<li><a href="#fake">'.count($cont->kids).' comments</a></li>
-					</ul>
-				</article>
-			</li>';
-		} else if ($type === 'new') {
-			$el = 
-			'<li class="list-group-item" id="'.$cont->id.'">
-				<article class="article p-3">
-					<dl>
-						<dt></dt>
-						<dd>
-							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
-							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
-						</dd>
-					</dl>
-					<ul class="article__footer">
-						<li>'
-							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
-							 '.timeDiff($cont->time).'
-						</li>
-						<li><a href="#fake">hide</a></li>
-						<li><a href="#fake">past</a></li>
-						<li><a href="#fake">web</a></li>
-						<li><a href="#fake">discuss</a></li>
-					</ul>
-				</article>
-			</li>';			
-		} else if ($type === 'show') {
-			$el = 
-			'<li class="list-group-item" id="'.$cont->id.'">
-				<article class="article p-3">
-					<dl>
-						<dt></dt>
-						<dd>
-							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
-							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
-						</dd>
-					</dl>
-					<ul class="article__footer">
-						<li>'
-							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
-							 '.timeDiff($cont->time).'
-						</li>
-						<li><a href="#fake">discuss</a></li>
-					</ul>
-				</article>
-			</li>';						
-		} else if ($type === 'ask') {
-			$el = 
-			'<li class="list-group-item" id="'.$cont->id.'">
-				<article class="article p-3">
-					<dl>
-						<dt></dt>
-						<dd>
-							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
-						</dd>
-					</dl>
-					<ul class="article__footer">
-						<li>'
-							.$cont->score.' points by <a href="#fake" class="article__link-alt">'.$cont->by.'</a>
-							 '.timeDiff($cont->time).'
-						</li>
-						<li><a href="#fake">discuss</a></li>
-					</ul>
-				</article>
-			</li>';					
-		} else if ($type === 'job') {
-			$el = 
-			'<li class="list-group-item" id="'.$cont->id.'">
-				<article class="article p-3">
-					<dl>
-						<dt></dt>
-						<dd>
-							<h6 class="article__title mr-2"><strong>'.$cont->title.'</strong></h6>
-							<a href="'.formatURL($cont->url).'" target="_blank" class="article__link-primary">'.formatURL($cont->url).'</a>
-						</dd>
-					</dl>
-					<ul class="article__footer">
-						<li>
-							<a href="#fake">'.timeDiff($cont->time).'</a>
-						</li>
-					</ul>
-				</article>
-			</li>';
-		} else {
-		}
+		return implode('',$collection);
+	}
+	
+	catch (Exception $e) {
+		echo 'Message: ' .$e->getMessage();
+	}
 
-		// Add new element to 'story elements' array
-		array_push($collection, $el);
-	};
-
-	return implode('',$collection);
+	
 }
 
 // Create main list (results go here)
@@ -347,14 +356,6 @@ function createDoc($type) {
 						.article dl dd {
 							flex-direction: row;
 						}
-					}
-
-					.article dl dd a {
-						text-align: right;
-					}
-	
-					.article dl dd span {
-	
 					}
 	
 					.article__title {
